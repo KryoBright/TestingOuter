@@ -6,4 +6,5 @@ public enum Status
     TRIAL,
     TIME_OFF,
     DISMISSED
+
 }

@@ -24,4 +24,11 @@ public class ScheduleTemplate
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Date creationDate;
 
+    @PrePersist
+    private void generateUUID() {
+        if (id == null) {
+            id = UUID.randomUUID().toString().replace("-", "");
+        }
+    }
+
 }

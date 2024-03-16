@@ -17,7 +17,6 @@ public class Period
 {
     @Id
     @Column(length = 32)
-    @GeneratedValue(generator = "uuid2")
     private String id;
 
     @OneToOne
@@ -36,4 +35,11 @@ public class Period
     @ManyToOne
     @JoinColumn(name = "executor_id", nullable = true)
     private Employee executor;
+
+    @PrePersist
+    private void generateUUID() {
+        if (id == null) {
+            id = UUID.randomUUID().toString().replace("-", "");
+        }
+    }
 }

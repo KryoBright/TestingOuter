@@ -19,7 +19,6 @@ public class Employee
 {
     @Id
     @Column(length = 32)
-    @GeneratedValue(generator = "uuid2")
     private String id;
 
     private String employeeName;
@@ -27,7 +26,15 @@ public class Employee
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Status status;
+
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     private Position position;
+
+    @PrePersist
+    private void generateUUID() {
+        if (id == null) {
+            id = UUID.randomUUID().toString().replace("-", "");
+        }
+    }
 }

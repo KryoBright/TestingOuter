@@ -28,5 +28,10 @@ public class Slot
     private ZonedDateTime beginTime;
     private ZonedDateTime endTime;
 
-
+    @PrePersist
+    private void generateUUID() {
+        if (id == null) {
+            id = UUID.randomUUID().toString().replace("-", "");
+        }
+    }
 }

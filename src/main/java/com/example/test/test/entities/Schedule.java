@@ -26,4 +26,11 @@ public class Schedule
 
     @Temporal(TemporalType.TIMESTAMP)
     private OffsetDateTime creationDate;
+
+    @PrePersist
+    private void generateUUID() {
+        if (id == null) {
+            id = UUID.randomUUID().toString().replace("-", "");
+        }
+    }
 }
