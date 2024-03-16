@@ -39,7 +39,7 @@ public class EmployeeController
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> readEmployees()
+    public ResponseEntity<List<Employee>> readEmployees()
     {
         return ResponseEntity.ok(employeeService.findAllEmployees());
     }

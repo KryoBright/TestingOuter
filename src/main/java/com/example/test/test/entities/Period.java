@@ -1,6 +1,7 @@
 package com.example.test.test.entities;
 
 import com.example.test.test.enums.SlotType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

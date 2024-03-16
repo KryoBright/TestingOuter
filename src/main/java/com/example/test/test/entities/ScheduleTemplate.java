@@ -3,7 +3,9 @@ package com.example.test.test.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,7 +19,6 @@ public class ScheduleTemplate
 {
     @Id
     @Column(length = 32)
-    @GeneratedValue(generator = "uuid2")
     private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -25,10 +26,13 @@ public class ScheduleTemplate
     private Date creationDate;
 
     @PrePersist
-    private void generateUUID() {
+    private void generateValues() {
         if (id == null) {
             id = UUID.randomUUID().toString().replace("-", "");
         }
+        if (creationDate == null)
+        {
+            creationDate = new Date();
+        }
     }
-
 }

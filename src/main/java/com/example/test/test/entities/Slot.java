@@ -1,5 +1,6 @@
 package com.example.test.test.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,6 @@ public class Slot
 {
     @Id
     @Column(length = 32)
-    @GeneratedValue(generator = "uuid2")
     private String id;
 
     @ManyToOne

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,19 +19,23 @@ public class Schedule
 {
     @Id
     @Column(length = 32)
-    @GeneratedValue(generator = "uuid2")
     private String id;
 
     @Column(nullable = true)
-    private String schedule_name;
+    private String scheduleName;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private OffsetDateTime creationDate;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Date creationDate;
 
     @PrePersist
     private void generateUUID() {
         if (id == null) {
             id = UUID.randomUUID().toString().replace("-", "");
+        }
+        if (creationDate == null)
+        {
+            creationDate = new Date();
         }
     }
 }

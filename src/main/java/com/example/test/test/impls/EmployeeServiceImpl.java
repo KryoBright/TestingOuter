@@ -2,7 +2,6 @@ package com.example.test.test.impls;
 
 import com.example.test.test.entities.Employee;
 import com.example.test.test.exception.ErrorResponse;
-import com.example.test.test.exception.ExceptionCreation;
 import com.example.test.test.repositories.EmployeeRepository;
 import com.example.test.test.responses.EmployeeWithoutId;
 import com.example.test.test.responses.Employees;
@@ -47,14 +46,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         else
         {
-            ErrorResponse exceptionCreation = ErrorResponse
+            ErrorResponse errorResponse = ErrorResponse
                     .builder()
                     .timestamp(ZonedDateTime.now())
                     .status(404)
                     .error("Not Found")
                     .message("Сотрудник с таким идентификатором не найден")
-                    .path("/employee").build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionCreation);
+                    .path("/employee/" + id).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
 
