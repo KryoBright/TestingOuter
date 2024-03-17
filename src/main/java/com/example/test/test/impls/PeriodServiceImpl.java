@@ -19,13 +19,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.example.test.test.repositories.PeriodPageRepository.*;
 
 @Transactional
 @RequiredArgsConstructor
@@ -163,9 +167,23 @@ public class PeriodServiceImpl implements PeriodService {
         *
         * page = 0, а size = 10 по умолчанию, чтобы если пользователь забудет ввести их, то не будет слишком большой нагрузки на приложение из-за получения из БД нескольких тысяч записей
         * */
+
         if (filterAndSorting.getFilter() == null)
         {
-            Page<Period> periods = periodPageRepository.findAll(PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
+            return null;
+        }
+        else
+        {
+            Page<Period> periods = periodPageRepository.findAll(Specification.where(equalId(filterAndSorting.getFilter().getId()))
+                    .and(equalSlotId(filterAndSorting.getFilter().getSlotId()))
+                    .and(equalScheduleId(filterAndSorting.getFilter().getScheduleId()))
+                    .and(equalSlotType(filterAndSorting.getFilter().getSlotType()))
+                    .and(equalAdministratorId(filterAndSorting.getFilter().getAdministratorId()))
+                    .and(equalExecutorId(filterAndSorting.getFilter().getExecutorId()))
+                    .and(afterBeginTime(filterAndSorting.getFilter().getBeginTime()))
+                    .and(beforeEndTime(filterAndSorting.getFilter().getEndTime())),
+                    PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
+
             if (periods.getTotalPages() < page)
             {
                 ErrorResponse errorResponse = ErrorResponse
@@ -177,49 +195,8 @@ public class PeriodServiceImpl implements PeriodService {
                         .path("/period/all").build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
             }
-            return PeriodsWithPageAndSize
-                    .builder()
-                    .size(size)
-                    .page(page)
-                    .periodList(periods
-                            .stream()
-                            .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                return PeriodWithAllIds.builder()
-                                        .id(period
-                                                .getId())
-                                        .slotId(period
-                                                .getSlot()
-                                                .getId())
-                                        .administratorId(period
-                                                .getAdministrator()
-                                                .getId())
-                                        .scheduleId(period
-                                                .getSchedule()
-                                                .getId())
-                                        .slotType(period
-                                                .getSlotType())
-                                        .executorId(executorId)
-                                        .build();})
-                            .collect(Collectors
-                                    .toList()))
-                    .build();
-        }
-        else
-        {
-            if (filterAndSorting.getFilter().getId() != null)
+            else
             {
-                Page<Period> periods = periodPageRepository.findAllById(filterAndSorting.getFilter().getId(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
                 return PeriodsWithPageAndSize
                         .builder()
                         .size(size)
@@ -246,305 +223,8 @@ public class PeriodServiceImpl implements PeriodService {
                                 .collect(Collectors
                                         .toList()))
                         .build();
-
-            }
-            else if (filterAndSorting.getFilter().getSlotType() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllBySlotType(filterAndSorting.getFilter().getSlotType(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getSlotId() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllBySlotId(filterAndSorting.getFilter().getSlotId(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getScheduleId() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllByScheduleId(filterAndSorting.getFilter().getScheduleId(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getAdministratorId() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllByAdministratorId(filterAndSorting.getFilter().getAdministratorId(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getExecutorId() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllByExecutorId(filterAndSorting.getFilter().getExecutorId(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getBeginTime() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllBySlotBeginTime(filterAndSorting.getFilter().getBeginTime(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-            }
-            else if (filterAndSorting.getFilter().getEndTime() != null)
-            {
-                Page<Period> periods = periodPageRepository.findAllBySlotEndTime(filterAndSorting.getFilter().getEndTime(), PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
-                if (periods.getTotalPages() < page)
-                {
-                    ErrorResponse errorResponse = ErrorResponse
-                            .builder()
-                            .timestamp(ZonedDateTime.now())
-                            .status(404)
-                            .error("Not Found")
-                            .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                            .path("/period/all").build();
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-                }
-                return PeriodsWithPageAndSize
-                        .builder()
-                        .size(size)
-                        .page(page)
-                        .periodList(periods
-                                .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
-                        .build();
-
             }
         }
-        ErrorResponse errorResponse = ErrorResponse
-                .builder()
-                .timestamp(ZonedDateTime.now())
-                .status(404)
-                .error("Not Found")
-                .message("Страницы с таким номером при данном размере (размер по умолчанию - 10) нет")
-                .path("/period/all").build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     private Sort.Direction findDirection(Direction direction)
