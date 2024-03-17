@@ -157,15 +157,14 @@ public class PeriodServiceImpl implements PeriodService {
         * Знаю, тут много повторений, но при попытке вынести в отдельную функцию эндпоинт перестал работать правильно (Почему - не разобрался)
         *
         * endTime и beginTime вводятся в формате YYYY-MM-DDTHH:mm:ssZ
-        * Фильтрация работает лишь по одному критерию (в представленном порядке)
+        * Фильтрация работает лишь по нескольким критериям
         *
         * Почти везде возвращаются "плоские" классы, кроме шаблона расписания, расписания и этой сущности
         *
-        * Самая жесть в package responses. Там пример не очень удачного именования + разделения
         *
         * Во всех контроллерах есть эндпоинт, предоставляющий всех сущностей определённого вида
         *
-        * page = 0, а size = 10 по умолчанию, чтобы если пользователь забудет ввести их, то не будет слишком большой нагрузки на приложение из-за получения из БД нескольких тысяч записей
+        * page = 0, а size = 10 по умолчанию, чтобы если пользователь забудет ввести их, то не будет слишком большой нагрузки на приложение из-за получения из БД огромного числа записей разом
         * */
 
         if (filterAndSorting.getFilter() == null)
@@ -175,13 +174,27 @@ public class PeriodServiceImpl implements PeriodService {
         else
         {
             Page<Period> periods = periodPageRepository.findAll(Specification.where(equalId(filterAndSorting.getFilter().getId()))
-                    .and(equalSlotId(filterAndSorting.getFilter().getSlotId()))
-                    .and(equalScheduleId(filterAndSorting.getFilter().getScheduleId()))
-                    .and(equalSlotType(filterAndSorting.getFilter().getSlotType()))
-                    .and(equalAdministratorId(filterAndSorting.getFilter().getAdministratorId()))
-                    .and(equalExecutorId(filterAndSorting.getFilter().getExecutorId()))
-                    .and(afterBeginTime(filterAndSorting.getFilter().getBeginTime()))
-                    .and(beforeEndTime(filterAndSorting.getFilter().getEndTime())),
+                    .and(equalSlotId(filterAndSorting
+                            .getFilter()
+                            .getSlotId()))
+                    .and(equalScheduleId(filterAndSorting
+                            .getFilter()
+                            .getScheduleId()))
+                    .and(equalSlotType(filterAndSorting
+                            .getFilter()
+                            .getSlotType()))
+                    .and(equalAdministratorId(filterAndSorting
+                            .getFilter()
+                            .getAdministratorId()))
+                    .and(equalExecutorId(filterAndSorting
+                            .getFilter()
+                            .getExecutorId()))
+                    .and(afterBeginTime(filterAndSorting
+                            .getFilter()
+                            .getBeginTime()))
+                    .and(beforeEndTime(filterAndSorting
+                            .getFilter()
+                            .getEndTime())),
                     PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));
 
             if (periods.getTotalPages() < page)
