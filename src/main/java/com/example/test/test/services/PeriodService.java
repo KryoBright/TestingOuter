@@ -1,7 +1,7 @@
 package com.example.test.test.services;
 
-import com.example.test.test.responses.accepted.FilterAndSorting;
-import com.example.test.test.responses.accepted.PeriodWithIds;
+import com.example.test.test.models.responses.accepted.FilterAndSorting;
+import com.example.test.test.models.responses.accepted.PeriodWithIds;
 
 public interface PeriodService
 {

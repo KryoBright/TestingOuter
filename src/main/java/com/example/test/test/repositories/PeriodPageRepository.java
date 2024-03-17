@@ -1,11 +1,10 @@
 package com.example.test.test.repositories;
 
-import com.example.test.test.entities.Period;
-import com.example.test.test.enums.SlotType;
+import com.example.test.test.models.entities.Period;
+import com.example.test.test.models.enums.SlotType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

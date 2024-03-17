@@ -1,8 +1,8 @@
 package com.example.test.test.controllers;
 
 import com.example.test.test.exception.ErrorResponse;
-import com.example.test.test.responses.accepted.FilterAndSorting;
-import com.example.test.test.responses.accepted.PeriodWithIds;
+import com.example.test.test.models.responses.accepted.FilterAndSorting;
+import com.example.test.test.models.responses.accepted.PeriodWithIds;
 import com.example.test.test.services.PeriodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

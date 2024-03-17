@@ -1,7 +1,7 @@
 package com.example.test.test.services;
 
-import com.example.test.test.entities.Schedule;
-import com.example.test.test.responses.returned.Id;
+import com.example.test.test.models.entities.Schedule;
+import com.example.test.test.models.responses.returned.Id;
 
 import java.util.List;
 
