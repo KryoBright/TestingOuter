@@ -1,7 +1,9 @@
 package com.example.test.test.controllers;
 
 import com.example.test.test.exception.ErrorResponse;
+import com.example.test.test.responses.FilterAndSorting;
 import com.example.test.test.responses.PeriodWithIds;
+import com.example.test.test.responses.PeriodsWithPageAndSize;
 import com.example.test.test.services.PeriodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,22 @@ public class PeriodController
     )
     {
         return periodService.createPeriod(period, administratorId);
+    }
+
+    @GetMapping("/{id}")
+    public Object readPeriod(
+            @PathVariable String id
+    )
+    {
+        return periodService.findPeriod(id);
+    }
+
+    @GetMapping("/all")
+    public Object readPeriods(
+            @RequestBody FilterAndSorting filterAndSorting
+    )
+    {
+        return periodService.findPeriods(filterAndSorting);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

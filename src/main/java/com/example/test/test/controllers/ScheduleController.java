@@ -24,12 +24,13 @@ public class ScheduleController
         return ResponseEntity.ok(scheduleService.createSchedule(schedule));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     public Object readSchedule(
-            @PathVariable String id
+            @RequestParam(required = false) String id, @RequestParam(required = false) String name
+
     )
     {
-        return scheduleService.findSchedule(id);
+        return scheduleService.findSchedule(id, name);
     }
 
     @GetMapping("/all")

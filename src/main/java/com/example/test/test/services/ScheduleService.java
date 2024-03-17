@@ -9,7 +9,7 @@ public interface ScheduleService
 {
     Id createSchedule(Schedule schedule);
 
-    Object findSchedule(String id);
+    Object findSchedule(String id, String name);
 
     List<Schedule> findAllSchedules();
 }

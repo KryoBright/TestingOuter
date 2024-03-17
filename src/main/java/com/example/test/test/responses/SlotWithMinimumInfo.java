@@ -5,16 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.Date;
-import java.util.List;
+import java.time.ZonedDateTime;
 
 @Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
-public class ScheduleTemplateWithoutId
+public class SlotWithMinimumInfo
 {
     @NonNull
-    private Date creationTime;
+    String id;
 
-    @NonNull List<SlotWithMinimumInfo> slotList;
+    @NonNull
+    private ZonedDateTime beginTime;
+    @NonNull
+    private ZonedDateTime endTime;
+
+
 }

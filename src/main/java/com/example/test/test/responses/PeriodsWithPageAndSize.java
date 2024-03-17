@@ -5,16 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.Date;
 import java.util.List;
 
 @Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
-public class ScheduleTemplateWithoutId
+public class PeriodsWithPageAndSize
 {
     @NonNull
-    private Date creationTime;
+    private List<PeriodWithAllIds> periodList;
+    private Integer page;
+    private Integer size;
 
-    @NonNull List<SlotWithMinimumInfo> slotList;
+
 }
