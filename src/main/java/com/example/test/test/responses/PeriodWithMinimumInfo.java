@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
+import java.util.List;
+
 @Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
@@ -22,4 +24,11 @@ public class PeriodWithMinimumInfo
     private SlotType slotType;
     private String executorId;
 
+    @Builder(toBuilder = true)
+    @AllArgsConstructor
+    @Data
+    public static class Employees
+    {
+        private List<Employee> employees;
+    }
 }

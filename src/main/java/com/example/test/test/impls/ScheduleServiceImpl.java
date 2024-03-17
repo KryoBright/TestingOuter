@@ -6,6 +6,8 @@ import com.example.test.test.exception.ErrorResponse;
 import com.example.test.test.repositories.PeriodRepository;
 import com.example.test.test.repositories.ScheduleRepository;
 import com.example.test.test.responses.*;
+import com.example.test.test.responses.returned.Id;
+import com.example.test.test.responses.returned.ScheduleWithPeriods;
 import com.example.test.test.services.ScheduleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

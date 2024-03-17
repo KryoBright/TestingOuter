@@ -2,13 +2,18 @@ package com.example.test.test.impls;
 import com.example.test.test.enums.Direction;
 import com.example.test.test.enums.Field;
 import com.example.test.test.repositories.*;
+import com.example.test.test.responses.accepted.FilterAndSorting;
+import com.example.test.test.responses.accepted.PeriodWithIds;
+import com.example.test.test.responses.returned.Id;
+import com.example.test.test.responses.returned.PeriodWithoutIdAndMinimumInfo;
+import com.example.test.test.responses.returned.PeriodsWithPageAndSize;
+import com.example.test.test.responses.supporting.PeriodWithAllIds;
 import org.springframework.data.domain.Page;
 import com.example.test.test.entities.Employee;
 import com.example.test.test.entities.Period;
 import com.example.test.test.entities.Schedule;
 import com.example.test.test.entities.Slot;
 import com.example.test.test.exception.ErrorResponse;
-import com.example.test.test.responses.*;
 import com.example.test.test.services.PeriodService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -144,6 +149,20 @@ public class PeriodServiceImpl implements PeriodService {
         Direction direction = filterAndSorting.getSort() == null ? Direction.DESC : filterAndSorting.getSort().getDirection() == null ? Direction.DESC : filterAndSorting.getSort().getDirection();
         Field field = filterAndSorting.getSort() == null ? Field.beginTime : filterAndSorting.getSort().getField() == null ? Field.beginTime : filterAndSorting.getSort().getField();
 
+        /*
+        * Знаю, тут много повторений, но при попытке вынести в отдельную функцию эндпоинт перестал работать правильно (Почему - не разобрался)
+        *
+        * endTime и beginTime вводятся в формате YYYY-MM-DDTHH:mm:ssZ
+        * Фильтрация работает лишь по одному критерию (в представленном порядке)
+        *
+        * Почти везде возвращаются "плоские" классы, кроме шаблона расписания, расписания и этой сущности
+        *
+        * Самая жесть в package responses. Там пример не очень удачного именования + разделения
+        *
+        * Во всех контроллерах есть эндпоинт, предоставляющий всех сущностей определённого вида
+        *
+        * page = 0, а size = 10 по умолчанию, чтобы если пользователь забудет ввести их, то не будет слишком большой нагрузки на приложение из-за получения из БД нескольких тысяч записей
+        * */
         if (filterAndSorting.getFilter() == null)
         {
             Page<Period> periods = periodPageRepository.findAll(PageRequest.of(page, size, Sort.by(findDirection(direction), findField(field))));

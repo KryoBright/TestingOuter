@@ -1,7 +1,7 @@
 package com.example.test.test.controllers;
 
 import com.example.test.test.entities.Schedule;
-import com.example.test.test.responses.Id;
+import com.example.test.test.responses.returned.Id;
 import com.example.test.test.services.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

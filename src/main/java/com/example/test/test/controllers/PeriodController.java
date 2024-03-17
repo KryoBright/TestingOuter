@@ -1,9 +1,8 @@
 package com.example.test.test.controllers;
 
 import com.example.test.test.exception.ErrorResponse;
-import com.example.test.test.responses.FilterAndSorting;
-import com.example.test.test.responses.PeriodWithIds;
-import com.example.test.test.responses.PeriodsWithPageAndSize;
+import com.example.test.test.responses.accepted.FilterAndSorting;
+import com.example.test.test.responses.accepted.PeriodWithIds;
 import com.example.test.test.services.PeriodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ import java.time.ZonedDateTime;
 public class PeriodController
 {
     private final PeriodService periodService;
+    //Основной контроллер
 
     @PostMapping
     public Object createPeriod(

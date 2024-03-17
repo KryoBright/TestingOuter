@@ -1,10 +1,8 @@
 package com.example.test.test.controllers;
 
-import com.example.test.test.entities.Slot;
 import com.example.test.test.exception.ErrorResponse;
-import com.example.test.test.responses.Id;
-import com.example.test.test.responses.SlotWithAllIds;
-import com.example.test.test.responses.SlotWithScheduleTemplateId;
+import com.example.test.test.responses.supporting.SlotWithAllIds;
+import com.example.test.test.responses.returned.SlotWithScheduleTemplateId;
 import com.example.test.test.services.SlotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

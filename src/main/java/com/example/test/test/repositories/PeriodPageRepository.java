@@ -23,4 +23,6 @@ public interface PeriodPageRepository extends PagingAndSortingRepository<Period,
     Page<Period> findAllBySlotBeginTime(ZonedDateTime beginTime, Pageable pageable);
 
     Page<Period> findAllBySlotEndTime(ZonedDateTime endTime, Pageable pageable);
+
+
 }

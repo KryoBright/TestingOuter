@@ -37,4 +37,5 @@ public class Employee
             id = UUID.randomUUID().toString().replace("-", "");
         }
     }
+    //Чтобы генерировался id до вставки в таблицу
 }

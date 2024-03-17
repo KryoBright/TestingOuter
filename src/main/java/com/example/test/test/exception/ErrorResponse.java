@@ -17,5 +17,5 @@ public class ErrorResponse
     private String error;
     private String message;
     private String path;
-
+    //Вместо стандартной ошибки часть (которую я предусмотрел) перехватываю и отправляю объектом этого класса. Внешне он отличается лишь полем message
 }

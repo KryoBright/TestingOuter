@@ -1,9 +1,7 @@
 package com.example.test.test.services;
 
-import com.example.test.test.entities.Slot;
-import com.example.test.test.responses.Id;
-import com.example.test.test.responses.SlotWithAllIds;
-import com.example.test.test.responses.SlotWithScheduleTemplateId;
+import com.example.test.test.responses.supporting.SlotWithAllIds;
+import com.example.test.test.responses.returned.SlotWithScheduleTemplateId;
 
 import java.util.List;
 
