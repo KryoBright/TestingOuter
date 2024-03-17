@@ -154,12 +154,13 @@ public class PeriodServiceImpl implements PeriodService {
         Field field = filterAndSorting.getSort() == null ? Field.beginTime : filterAndSorting.getSort().getField() == null ? Field.beginTime : filterAndSorting.getSort().getField();
 
         /*
-        * Знаю, тут много повторений, но при попытке вынести в отдельную функцию эндпоинт перестал работать правильно (Почему - не разобрался)
         *
         * endTime и beginTime вводятся в формате YYYY-MM-DDTHH:mm:ssZ
         * Фильтрация работает лишь по нескольким критериям
         *
         * Почти везде возвращаются "плоские" классы, кроме шаблона расписания, расписания и этой сущности
+        *
+        * FROM_HOME у меня с нижним подчёркиванием, так как в противном случае не получается enum
         *
         *
         * Во всех контроллерах есть эндпоинт, предоставляющий всех сущностей определённого вида
