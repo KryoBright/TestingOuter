@@ -17,6 +17,7 @@ public class PeriodsWithPageAndSize
     private List<PeriodWithAllIds> periodList;
     private Integer page;
     private Integer size;
+    private Integer totalPages;
 
 
 }

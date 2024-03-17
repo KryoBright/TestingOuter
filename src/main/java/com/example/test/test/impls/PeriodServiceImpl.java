@@ -214,6 +214,8 @@ public class PeriodServiceImpl implements PeriodService {
                         .builder()
                         .size(size)
                         .page(page)
+                        .totalPages(periods
+                                .getTotalPages())
                         .periodList(periods
                                 .stream()
                                 .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
