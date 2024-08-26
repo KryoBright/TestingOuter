@@ -218,42 +218,39 @@ public class PeriodServiceImpl implements PeriodService {
                                 .getTotalPages())
                         .periodList(periods
                                 .stream()
-                                .map(period -> {String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
-                                    return PeriodWithAllIds.builder()
-                                            .id(period
-                                                    .getId())
-                                            .slotId(period
-                                                    .getSlot()
-                                                    .getId())
-                                            .administratorId(period
-                                                    .getAdministrator()
-                                                    .getId())
-                                            .scheduleId(period
-                                                    .getSchedule()
-                                                    .getId())
-                                            .slotType(period
-                                                    .getSlotType())
-                                            .executorId(executorId)
-                                            .build();})
-                                .collect(Collectors
-                                        .toList()))
+                                .map(PeriodServiceImpl::getPeriod)
+                                .toList())
                         .build();
             }
         }
     }
 
+    private static PeriodWithAllIds getPeriod(Period period) {
+        String executorId = period.getExecutor() != null ? period.getExecutor().getId() : null;
+        return PeriodWithAllIds.builder()
+                .id(period
+                        .getId())
+                .slotId(period
+                        .getSlot()
+                        .getId())
+                .administratorId(period
+                        .getAdministrator()
+                        .getId())
+                .scheduleId(period
+                        .getSchedule()
+                        .getId())
+                .slotType(period
+                        .getSlotType())
+                .executorId(executorId)
+                .build();
+    }
+
     private Sort.Direction findDirection(Direction direction)
     {
-        switch (direction)
-        {
-            case ASC:
-                return Sort.Direction.ASC;
-            case DESC:
-                return Sort.Direction.DESC;
-            default:
-                return Sort.Direction.DESC;
-
+        if (Objects.requireNonNull(direction) == Direction.ASC) {
+            return Sort.Direction.ASC;
         }
+        return Sort.Direction.DESC;
     }
 
     private String findField(Field field)

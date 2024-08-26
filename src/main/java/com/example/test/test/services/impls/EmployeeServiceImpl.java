@@ -24,41 +24,33 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Id createEmployee(Employee employee) {
-        employeeRepository.save(employee);
-        return Id.builder().id(employee.getId()).build();
+        var newEmployee = employeeRepository.save(employee);
+        return Id.builder().id(newEmployee.getId()).build();
     }
 
     @Override
-    public Object findEmployee(String id)
-    {
-        Employee employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null)
-        {
-            return EmployeeWithoutId.builder()
-                    .employeeName(employee
-                            .getEmployeeName())
-                    .status(employee
-                            .getStatus())
-                    .position(employee
-                            .getPosition())
-                    .build();
-        }
-        else
-        {
-            ErrorResponse errorResponse = ErrorResponse
-                    .builder()
-                    .timestamp(ZonedDateTime.now())
-                    .status(404)
-                    .error("Not Found")
-                    .message("Сотрудник с таким идентификатором не найден")
-                    .path("/employee/" + id).build();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        }
+    public Object findEmployee(String id) {
+        return employeeRepository.findById(id)
+                .map(employee -> EmployeeWithoutId.builder()
+                        .employeeName(employee
+                                .getEmployeeName())
+                        .status(employee
+                                .getStatus())
+                        .position(employee
+                                .getPosition())
+                        .build())
+                .map(i -> (Object)i)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse
+                        .builder()
+                        .timestamp(ZonedDateTime.now())
+                        .status(404)
+                        .error("Not Found")
+                        .message("Сотрудник с таким идентификатором не найден")
+                        .path("/employee/" + id).build()));
     }
 
     @Override
-    public List<Employee> findAllEmployees()
-    {
+    public List<Employee> findAllEmployees() {
         return employeeRepository.findAll();
     }
 }

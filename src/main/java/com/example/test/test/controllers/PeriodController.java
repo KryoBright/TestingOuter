@@ -13,13 +13,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.ZonedDateTime;
 
+/**
+ * Основной контроллер
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/period")
 public class PeriodController
 {
     private final PeriodService periodService;
-    //Основной контроллер
 
     @PostMapping
     public Object createPeriod(

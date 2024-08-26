@@ -43,6 +43,10 @@ public interface PeriodPageRepository extends PagingAndSortingRepository<Period,
 
     static Specification<Period> equalScheduleId(String scheduleId)
     {
+        if (scheduleId == null)
+        {
+            return Specification.allOf();
+        }
         return (period, cq, cb) -> {
             if (scheduleId == null)
             {

@@ -18,7 +18,8 @@ public class Employee
 {
     @Id
     @Column(length = 32)
-    private String id;
+    @Builder.Default
+    private String id = UUID.randomUUID().toString().replace("-", "");
 
     private String employeeName;
 
