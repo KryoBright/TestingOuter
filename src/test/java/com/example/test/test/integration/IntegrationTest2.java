@@ -1,22 +1,26 @@
 package com.example.test.test.integration;
 
 import com.example.test.test.models.entities.Employee;
-import com.example.test.test.services.EmployeeService;
-import com.example.test.test.services.impls.EmployeeServiceImpl;
+import com.example.test.test.models.enums.Status;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,26 +30,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IntegrationTest2 {
 
     @Autowired
+    private DatabaseStepProvider databaseStepProvider;
+    @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    EntityManagerFactory entityManagerFactory;
+    @BeforeEach
+    void setup() {
+        databaseStepProvider.deleteEmployees();
+    }
 
-    @Test
-    void test() throws Exception {
-        //Дано
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        var employee = Instancio.create(Employee.class);
-        entityManager.persist(employee);
-        entityManager.getTransaction().commit();
+    @ParameterizedTest
+    @MethodSource("employeeProvider")
+    void test(Employee employee) throws Exception {
+        databaseStepProvider.saveEntity(employee);
         //Когда
-        mockMvc.perform(
+        var response = mockMvc.perform(
                         MockMvcRequestBuilders.get("/employee/all")
                 ).andDo(print())
                 //Тогда
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string(new ObjectMapper().writeValueAsString(List.of(employee))))
-        ;
+                .andReturn().getResponse();
+        var actualResponse = new ObjectMapper().readValue(response.getContentAsString(), new TypeReference<List<Employee>>() {
+        });
+        assertThat(actualResponse).usingRecursiveComparison()
+                .isEqualTo(List.of(employee));
+    }
+
+    private static Stream<Arguments> employeeProvider() {
+        var employeeWithEmptyName = Instancio.create(Employee.class);
+        employeeWithEmptyName.setEmployeeName("");
+        return Stream.of(
+                Arguments.of(
+                        Instancio.create(Employee.class)
+                ),
+                Arguments.of(
+                        Instancio.create(Employee.class)
+                ),
+                Arguments.of(
+                        Instancio.create(Employee.class)
+                ),
+                Arguments.of(
+                        employeeWithEmptyName
+                )
+        );
     }
 }
